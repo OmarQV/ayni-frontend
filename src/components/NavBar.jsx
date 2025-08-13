@@ -49,6 +49,19 @@ const NavBar = () => {
                                 Home
                             </Link>
                         </li>
+
+                         <li>
+                            <Link 
+                                to="/destinations"
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/destinations") 
+                                        ? 'text-white bg-primary' 
+                                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                Destinos
+                            </Link>
+                        </li>
                         <li>
                             <Link
                                 to="/Register"
