@@ -4,6 +4,7 @@ import './App.css'
 import Navbar from './components/NavBar';
 import Home from './pages/Home';
 import UserProfile from './pages/UserProfile';
+import Destinations from './pages/Destinations';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/destinations" element={<Destinations />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="*" element={
               <div className="text-center py-20">
