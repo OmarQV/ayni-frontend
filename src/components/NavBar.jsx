@@ -39,34 +39,40 @@ const NavBar = () => {
                 <div className="navbar-center hidden lg:flex">
                     <ul className="flex space-x-4">
                         <li>
-                            <Link
+                            <Link 
                                 to="/home"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/home")
-                                        ? 'text-white bg-primary'
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/home") 
+                                        ? 'text-white bg-primary' 
                                         : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                                    }`}
+                                }`}
                             >
                                 Home
                             </Link>
                         </li>
+
                         <li>
-                            <Link
-                                to="/Register"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/Register")
-                                        ? 'text-white bg-secondary'
+                            <Link 
+                                to="/destinos"
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/destinos") 
+                                        ? 'text-white bg-primary' 
                                         : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                                    }`}
+                                }`}
                             >
-                                Register
+                                Destinos
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                to="/profile"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/profile") ? "text-white bg-accent" : "text-gray-300 hover:text-white hover:bg-gray-800"
-                                    }`}
+                            <Link 
+                                to="/Register"
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/Register") 
+                                        ? 'text-white bg-secondary' 
+                                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                }`}
                             >
-                                Perfil
+                                Register
                             </Link>
                         </li>
                     </ul>
@@ -85,8 +91,8 @@ const NavBar = () => {
                                         </span>
                                     </li>
                                     <li>
-                                        <button
-                                            onClick={connectWallet}
+                                        <button 
+                                            onClick={connectWallet} 
                                             className="flex items-center text-red-400 hover:bg-gray-700 py-2 px-3 rounded-md"
                                         >
                                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,8 +104,8 @@ const NavBar = () => {
                                 </>
                             ) : (
                                 <li>
-                                    <button
-                                        onClick={connectWallet}
+                                    <button 
+                                        onClick={connectWallet} 
                                         className="flex items-center text-white hover:bg-gray-700 py-2 px-3 rounded-md"
                                     >
                                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

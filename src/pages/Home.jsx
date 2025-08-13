@@ -50,7 +50,7 @@ const Home = () => {
             </p>
             <div className="space-x-4">
                 <Link 
-                to="/destinations" 
+                to="/destinos" 
                 className="btn btn-accent btn-lg text-white font-semibold px-8"
                 >
                 Explorar Destinos
@@ -120,7 +120,7 @@ const Home = () => {
             </div>
 
             <div className="text-center mt-12">
-                <Link to="/destinations" className="btn btn-primary btn-wide">
+                <Link to="/destinos" className="btn btn-primary btn-wide">
                 Ver Todos los Destinos
                 </Link>
             </div>
