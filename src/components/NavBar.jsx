@@ -35,22 +35,23 @@ const NavBar = () => {
                     </Link>
                 </div>
 
-                {/* Menu principal (desktop) - Solo 2 rutas */}
+                {/* Menu principal (desktop) */}
                 <div className="navbar-center hidden lg:flex">
                     <ul className="flex space-x-4">
                         <li>
                             <Link
                                 to="/home"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/home")
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/home")
                                         ? 'text-white bg-primary'
                                         : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                                    }`}
+                                }`}
                             >
                                 Home
                             </Link>
                         </li>
 
-                         <li>
+                        <li>
                             <Link 
                                 to="/destinations"
                                 className={`font-medium px-4 py-2 rounded-lg transition-colors ${
@@ -62,22 +63,41 @@ const NavBar = () => {
                                 Destinos
                             </Link>
                         </li>
+
+                        <li>
+                            <Link
+                                to="/mapa"
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/mapa")
+                                        ? 'text-white bg-primary'
+                                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                Mapa
+                            </Link>
+                        </li>
+
                         <li>
                             <Link
                                 to="/Register"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/Register")
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/Register")
                                         ? 'text-white bg-secondary'
                                         : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                                    }`}
+                                }`}
                             >
                                 Register
                             </Link>
                         </li>
+
                         <li>
                             <Link
                                 to="/profile"
-                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${isActive("/profile") ? "text-white bg-accent" : "text-gray-300 hover:text-white hover:bg-gray-800"
-                                    }`}
+                                className={`font-medium px-4 py-2 rounded-lg transition-colors ${
+                                    isActive("/profile") 
+                                        ? "text-white bg-accent" 
+                                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                                }`}
                             >
                                 Perfil
                             </Link>
@@ -85,7 +105,7 @@ const NavBar = () => {
                     </ul>
                 </div>
 
-                {/* Botón de Wallet - Siempre desplegable */}
+                {/* Botón de Wallet */}
                 <div className="navbar-end">
                     <div className="dropdown dropdown-end">
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-gray-800 rounded-box w-52 border border-gray-700 mt-2">
