@@ -1,6 +1,7 @@
 // src/pages/UserProfile.jsx
 import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { useWallet } from '../hooks/useWallet';
+import ModalTokenizar from '../components/ModalTokenizar';
 import LoadingSpinner from '../components/profile/LoadingSpinner';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileCard from '../components/profile/ProfileCard';
@@ -11,7 +12,8 @@ import ReservationsList from '../components/profile/ReservationsList';
 import NFTModal from '../components/profile/NFTModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
 
-const fakeUserData = {
+// --- Datos de prueba para ambos perfiles ---
+const fakeTuristaData = {
     name: 'Jhamil Calixto',
     email: 'jhamil@example.com',
     avatar: 'https://i.pravatar.cc/150?u=jhamil',
@@ -22,116 +24,121 @@ const fakeUserData = {
         instagram: 'https://instagram.com/jhamil',
     },
     historial: [
-        {
-            id: 1,
-            date: '2025-01-10',
-            action: 'Visitó la Isla del Sol',
-            location: 'Lago Titicaca',
-            type: 'visita'
-        },
-        {
-            id: 2,
-            date: '2025-01-15',
-            action: 'Adquirió NFT de Tiwanaku',
-            location: 'Tiwanaku',
-            type: 'compra'
-        },
-        {
-            id: 3,
-            date: '2025-02-20',
-            action: 'Completó tour en Sajama',
-            location: 'Parque Nacional Sajama',
-            type: 'tour'
-        },
+        { id: 1, date: '2025-01-10', action: 'Visitó la Isla del Sol', location: 'Lago Titicaca', type: 'visita' },
+        { id: 2, date: '2025-01-15', action: 'Adquirió NFT de Tiwanaku', location: 'Tiwanaku', type: 'compra' },
+        { id: 3, date: '2025-02-20', action: 'Completó tour en Sajama', location: 'Parque Nacional Sajama', type: 'tour' },
     ],
     nfts: [
-        {
-            id: 101,
-            title: 'Isla del Sol - Atardecer',
-            issuedDate: '2025-01-10',
-            imageUrl: 'https://ganasdemundo.com/wp-content/uploads/2020/04/isla-del-sol-4-scaled.jpg',
-            location: 'Lago Titicaca',
-            coordinates: '-16.0170, -69.1818',
-            valor: '0.05 ETH',
-            beneficioComunidad: '30%',
-            metadata: {
-                fotos: 3,
-                audios: 1,
-                qrVerified: true
-            }
-        },
-        {
-            id: 102,
-            title: 'Tiwanaku - Puerta del Sol',
-            issuedDate: '2025-01-15',
-            imageUrl: 'https://ahoraelpueblo.bo/images/noticias/Cultura/2024/09/Tiwanaku-3-0224.jpg',
-            location: 'Tiwanaku',
-            coordinates: '-16.5547, -68.6734',
-            valor: '0.08 ETH',
-            beneficioComunidad: '40%',
-            metadata: {
-                fotos: 5,
-                audios: 2,
-                qrVerified: true
-            }
-        },
+        { id: 101, title: 'Isla del Sol - Atardecer', issuedDate: '2025-01-10', imageUrl: 'https://ganasdemundo.com/wp-content/uploads/2020/04/isla-del-sol-4-scaled.jpg', location: 'Lago Titicaca', coordinates: '-16.0170, -69.1818', valor: '0.05 ETH', beneficioComunidad: '30%', metadata: { fotos: 3, audios: 1, qrVerified: true }},
+        { id: 102, title: 'Tiwanaku - Puerta del Sol', issuedDate: '2025-01-15', imageUrl: 'https://ahoraelpueblo.bo/images/noticias/Cultura/2024/09/Tiwanaku-3-0224.jpg', location: 'Tiwanaku', coordinates: '-16.5547, -68.6734', valor: '0.08 ETH', beneficioComunidad: '40%', metadata: { fotos: 5, audios: 2, qrVerified: true }},
     ],
     reservas: [
-        {
-            id: 201,
-            lugar: 'Parque Nacional Sajama',
-            fecha: '2025-03-15',
-            codigo: 'SAJA-789456',
-            estado: 'confirmada',
-            ticketHash: '0x89a4be...4582f'
-        }
+        { id: 201, lugar: 'Parque Nacional Sajama', fecha: '2025-03-15', codigo: 'SAJA-789456', estado: 'confirmada', ticketHash: '0x89a4be...4582f' }
     ]
 };
 
+const fakeOperadorData = {
+    name: 'Operadora "Ayni Tours"',
+    email: 'aynitours@example.com',
+    avatar: 'https://i.pravatar.cc/150?u=aynitours',
+    role: 'Operador Certificado',
+    bio: 'Nos especializamos en rutas turísticas sostenibles en el altiplano boliviano.',
+    ventas: 45,
+    rutasPublicadas: 3,
+    ingresos: '15.2 ETH',
+    social: {
+        twitter: 'https://twitter.com/aynitours',
+        instagram: 'https://instagram.com/aynitours',
+    },
+};
+
 export default function UserProfile() {
-    const [user, setUser] = useState(null);
+    const { 
+        isConnected, 
+        account: walletAddress, 
+        userType, 
+        registerUser,
+        connectWallet,
+        loading: walletLoading 
+    } = useWallet();
+    
     const [isLoading, setIsLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
     const [activeTab, setActiveTab] = useState('nfts');
     const [selectedNFT, setSelectedNFT] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [walletAddress, setWalletAddress] = useState('');
-    const [isWalletConnected, setIsWalletConnected] = useState(false);
 
-    // Verificar conexión de wallet
+    const user = userType === 'turista' ? fakeTuristaData : fakeOperadorData;
+
     useEffect(() => {
-        const checkWalletConnection = async () => {
-            if (window.ethereum) {
-                try {
-                    const provider = new ethers.BrowserProvider(window.ethereum);
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        setIsWalletConnected(true);
-                        setWalletAddress(accounts[0].address);
-                    }
-                } catch (error) {
-                    console.error('Error checking wallet connection:', error);
-                }
-            }
-        };
-
-        checkWalletConnection();
-    }, []);
-
-    // Simular carga de datos del usuario
-    useEffect(() => {
+        // Simulación de carga de datos
         const timer = setTimeout(() => {
-            setUser(fakeUserData);
             setIsLoading(false);
         }, 1000);
-
         return () => clearTimeout(timer);
-    }, []);
+    }, [userType]);
+
+    const handleConnectWallet = async () => {
+        try {
+            await connectWallet();
+        } catch (err) {
+            console.error("Error al conectar la wallet:", err);
+        }
+    };
+
+    // --- Lógica de renderizado condicional ---
+    if (!isConnected) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+                <div className="text-center">
+                    <p className="text-2xl font-bold text-gray-800">
+                        Conecta tu wallet para ver tu perfil 
+                    </p>
+                    <button
+                        onClick={handleConnectWallet}
+                        disabled={walletLoading}
+                        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                        {walletLoading ? 'Conectando...' : 'Conectar Wallet'}
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!userType) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+                <div className="text-center p-8 bg-white rounded-2xl shadow-xl">
+                    <h1 className="text-3xl font-extrabold text-gray-800 mb-4">
+                        Elige tu rol en Ayni
+                    </h1>
+                    <p className="text-gray-600 mb-8 max-w-md">
+                        Selecciona el rol que mejor te describe para acceder a tu dashboard personalizado.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                            onClick={() => registerUser('turista')}
+                            className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        >
+                            Soy un Turista 🌍
+                        </button>
+                        <button
+                            onClick={() => registerUser('operador')}
+                            className="w-full sm:w-auto px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+                        >
+                            Soy un Operador/Comunidad 🏞️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     const handleUpdateProfile = (updatedData) => {
-        setUser(prevUser => ({
-            ...prevUser,
-            ...updatedData
-        }));
+        // Esta función se mantiene igual ya que trabaja con los datos de prueba
+        // En una implementación real, aquí harías una llamada a tu backend
+        console.log("Perfil actualizado:", updatedData);
         setShowEditModal(false);
     };
 
@@ -139,7 +146,9 @@ export default function UserProfile() {
         return <LoadingSpinner />;
     }
 
-    return (
+    // --- Renderizado del perfil de Turista ---
+    if (userType === 'turista') {
+        return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
             {/* Modales */}
             {selectedNFT && (
@@ -153,7 +162,7 @@ export default function UserProfile() {
                 <EditProfileModal
                     user={user}
                     walletAddress={walletAddress}
-                    isWalletConnected={isWalletConnected}
+                    isWalletConnected={isConnected}
                     onClose={() => setShowEditModal(false)}
                     onUpdate={handleUpdateProfile}
                 />
@@ -165,7 +174,7 @@ export default function UserProfile() {
                 <ProfileCard 
                     user={user}
                     walletAddress={walletAddress}
-                    isWalletConnected={isWalletConnected}
+                    isWalletConnected={isConnected}
                     onEditClick={() => setShowEditModal(true)}
                 />
 
@@ -193,4 +202,64 @@ export default function UserProfile() {
             </div>
         </div>
     );
+    }
+    
+    // --- Renderizado del perfil de Operador ---
+    if (userType === 'operador') {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
+                {showModal && <ModalTokenizar onClose={() => setShowModal(false)} />}
+                <div className="max-w-6xl mx-auto">
+                    {/* Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-blue-600 mb-2">Mi Dashboard de Operador</h1>
+                        <p className="text-lg text-emerald-700">Gestión de rutas y seguimiento de ingresos</p>
+                    </div>
+                    {/* Tarjeta de perfil del operador */}
+                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-12 transition-all duration-300 hover:shadow-2xl p-8">
+                        <div className="flex flex-col md:flex-row items-center justify-between">
+                            <div className="flex items-center">
+                                <img src={user.avatar} alt="Avatar Operador" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+                                <div className="ml-6">
+                                    <h2 className="text-3xl font-bold text-gray-800">{user.name}</h2>
+                                    <p className="text-gray-600">{user.email}</p>
+                                    <p className="text-emerald-600 mt-1">{user.role}</p>
+                                </div>
+                            </div>
+                            <div className="mt-6 md:mt-0">
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center"
+                                >
+                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                                    Crear Nueva Ruta
+                                </button>
+                            </div>
+                        </div>
+                        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div className="bg-blue-50 p-6 rounded-xl">
+                                <p className="text-sm text-blue-600">Ventas totales</p>
+                                <p className="text-4xl font-bold text-blue-800 mt-2">{user.ventas}</p>
+                            </div>
+                            <div className="bg-green-50 p-6 rounded-xl">
+                                <p className="text-sm text-green-600">Rutas publicadas</p>
+                                <p className="text-4xl font-bold text-green-800 mt-2">{user.rutasPublicadas}</p>
+                            </div>
+                            <div className="bg-purple-50 p-6 rounded-xl">
+                                <p className="text-sm text-purple-600">Ingresos (estimado)</p>
+                                <p className="text-2xl font-bold text-purple-800 mt-2">{user.ingresos}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Aquí puedes añadir la sección para gestionar las rutas publicadas */}
+                    <div className="mt-8">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">Mis Rutas</h3>
+                        <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-6">
+                            <p className="text-gray-500">Aquí se mostrará la lista de tus rutas publicadas. (En desarrollo)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
