@@ -11,17 +11,18 @@ import HistoryList from '../components/profile/HistoryList';
 import ReservationsList from '../components/profile/ReservationsList';
 import NFTModal from '../components/profile/NFTModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
+import ProgressList from '../components/profile/ProgressList';
 
 // --- Datos iniciales para ambos perfiles ---
 const initialTuristaData = {
-    name: 'Jhamil Calixto',
-    email: 'jhamil@example.com',
+    name: 'Jose Fernandez',
+    email: 'jose@gmail.com',
     avatar: 'https://i.pravatar.cc/150?u=jhamil',
     role: 'Turista responsable',
     bio: 'Apasionado por el turismo sostenible y la preservación cultural',
     social: {
-        twitter: 'https://twitter.com/jhamil',
-        instagram: 'https://instagram.com/jhamil',
+        twitter: 'https://twitter.com/jose',
+        instagram: 'https://instagram.com/jose',
     },
     historial: [
         { id: 1, date: '2025-01-10', action: 'Visitó la Isla del Sol', location: 'Lago Titicaca', type: 'visita' },
@@ -29,8 +30,8 @@ const initialTuristaData = {
         { id: 3, date: '2025-02-20', action: 'Completó tour en Sajama', location: 'Parque Nacional Sajama', type: 'tour' },
     ],
     nfts: [
-        { id: 101, title: 'Isla del Sol - Atardecer', issuedDate: '2025-01-10', imageUrl: 'https://ganasdemundo.com/wp-content/uploads/2020/04/isla-del-sol-4-scaled.jpg', location: 'Lago Titicaca', coordinates: '-16.0170, -69.1818', valor: '0.05 ETH', beneficioComunidad: '30%', metadata: { fotos: 3, audios: 1, qrVerified: true }},
-        { id: 102, title: 'Tiwanaku - Puerta del Sol', issuedDate: '2025-01-15', imageUrl: 'https://ahoraelpueblo.bo/images/noticias/Cultura/2024/09/Tiwanaku-3-0224.jpg', location: 'Tiwanaku', coordinates: '-16.5547, -68.6734', valor: '0.08 ETH', beneficioComunidad: '40%', metadata: { fotos: 5, audios: 2, qrVerified: true }},
+        { id: 101, title: 'Isla del Sol - Atardecer', issuedDate: '2025-01-10', imageUrl: 'https://ganasdemundo.com/wp-content/uploads/2020/04/isla-del-sol-4-scaled.jpg', location: 'Lago Titicaca', coordinates: '-16.0170, -69.1818', valor: '0.05 ETH', beneficioComunidad: '30%', metadata: { fotos: 3, audios: 1, qrVerified: true } },
+        { id: 102, title: 'Tiwanaku - Puerta del Sol', issuedDate: '2025-01-15', imageUrl: 'https://ahoraelpueblo.bo/images/noticias/Cultura/2024/09/Tiwanaku-3-0224.jpg', location: 'Tiwanaku', coordinates: '-16.5547, -68.6734', valor: '0.08 ETH', beneficioComunidad: '40%', metadata: { fotos: 5, audios: 2, qrVerified: true } },
     ],
     reservas: [
         { id: 201, lugar: 'Parque Nacional Sajama', fecha: '2025-03-15', codigo: 'SAJA-789456', estado: 'confirmada', ticketHash: '0x89a4be...4582f' }
@@ -52,16 +53,17 @@ const initialOperadorData = {
     },
 };
 
+
 export default function UserProfile() {
-    const { 
-        isConnected, 
-        account: walletAddress, 
-        userType, 
+    const {
+        isConnected,
+        account: walletAddress,
+        userType,
         registerUser,
         connectWallet,
-        loading: walletLoading 
+        loading: walletLoading
     } = useWallet();
-    
+
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [activeTab, setActiveTab] = useState('nfts');
@@ -69,18 +71,37 @@ export default function UserProfile() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [userData, setUserData] = useState(null);
 
+
+    const progressData = [
+        {
+            id: 1,
+            etapa: "Lanzamiento MVP",
+            descripcion: "Publicación de la primera versión en Mantle L2",
+            fecha: "2025-08-10",
+            estado: "completado",
+            evidenciaHash: "ipfs://Qm123abc456def"
+        },
+        {
+            id: 2,
+            etapa: "Integración con comunidades",
+            descripcion: "Registro de las primeras 5 rutas turísticas",
+            fecha: "2025-08-20",
+            estado: "en_progreso"
+        }
+    ];
+
     // Inicializar datos del usuario basado en el tipo
     useEffect(() => {
         if (userType) {
-            setUserData(userType === 'turista' 
-                ? {...initialTuristaData} 
-                : {...initialOperadorData});
-            
+            setUserData(userType === 'turista'
+                ? { ...initialTuristaData }
+                : { ...initialOperadorData });
+
             // Simulación de carga de datos
             const timer = setTimeout(() => {
                 setIsLoading(false);
             }, 1000);
-            
+
             return () => clearTimeout(timer);
         }
     }, [userType]);
@@ -107,7 +128,7 @@ export default function UserProfile() {
             <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
                 <div className="text-center">
                     <p className="text-2xl font-bold text-gray-800">
-                        Conecta tu wallet para ver tu perfil 
+                        Conecta tu wallet para ver tu perfil
                     </p>
                     <button
                         onClick={handleConnectWallet}
@@ -157,61 +178,72 @@ export default function UserProfile() {
     // --- Renderizado del perfil de Turista ---
     if (userType === 'turista') {
         return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
-            {/* Modales */}
-            {selectedNFT && (
-                <NFTModal 
-                    nft={selectedNFT} 
-                    onClose={() => setSelectedNFT(null)} 
-                />
-            )}
-            
-            {showEditModal && (
-                <EditProfileModal
-                    user={userData}
-                    walletAddress={walletAddress}
-                    isWalletConnected={isConnected}
-                    onClose={() => setShowEditModal(false)}
-                    onUpdate={handleUpdateProfile}
-                />
-            )}
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">
+                {/* Modales */}
+                {selectedNFT && (
+                    <NFTModal
+                        nft={selectedNFT}
+                        onClose={() => setSelectedNFT(null)}
+                    />
+                )}
 
-            <div className="max-w-6xl mx-auto">
-                <ProfileHeader />
-                
-                <ProfileCard 
-                    user={userData}
-                    walletAddress={walletAddress}
-                    isWalletConnected={isConnected}
-                    onEditClick={() => setShowEditModal(true)}
-                />
+                {showEditModal && (
+                    <EditProfileModal
+                        user={userData}
+                        walletAddress={walletAddress}
+                        isWalletConnected={isConnected}
+                        onClose={() => setShowEditModal(false)}
+                        onUpdate={handleUpdateProfile}
+                    />
+                )}
 
-                <TabNavigation 
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                />
+                <div className="max-w-6xl mx-auto">
+                    <ProfileHeader />
 
-                <div className="mb-12">
-                    {activeTab === 'nfts' && (
-                        <NFTGrid 
-                            nfts={userData.nfts}
-                            onNFTClick={setSelectedNFT}
-                        />
-                    )}
+                    <ProfileCard
+                        user={userData}
+                        walletAddress={walletAddress}
+                        isWalletConnected={isConnected}
+                        onEditClick={() => setShowEditModal(true)}
+                    />
 
-                    {activeTab === 'historial' && (
-                        <HistoryList history={userData.historial} />
-                    )}
+                    <TabNavigation
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                    />
 
-                    {activeTab === 'reservas' && (
-                        <ReservationsList reservations={userData.reservas} />
-                    )}
+                    <div className="mb-12">
+                        {activeTab === 'nfts' && (
+                            <NFTGrid
+                                nfts={userData.nfts}
+                                onNFTClick={setSelectedNFT}
+                            />
+                        )}
+
+                        {activeTab === 'historial' && (
+                            <HistoryList history={userData.historial} />
+                        )}
+
+                        {activeTab === 'reservas' && (
+                            <ReservationsList reservations={userData.reservas} />
+                        )}
+
+                        {activeTab === 'progreso' && (
+                            <div>
+                                {/* <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+
+                                {activeTab === 'nfts' && <NFTGrid nfts={[]} />}
+                                {activeTab === 'historial' && <div>Contenido historial</div>}
+                                {activeTab === 'reservas' && <ReservationsList reservations={[]} />}
+                                {activeTab === 'progreso' && <ProgressList progress={progressData} />}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
     }
-    
+
     // --- Renderizado del perfil de Operador ---
     if (userType === 'operador') {
         return (

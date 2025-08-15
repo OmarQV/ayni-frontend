@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWallet } from '../hooks/useWallet';
 
+
 const NavBar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    
 
     // Usamos el hook useWallet
     const {

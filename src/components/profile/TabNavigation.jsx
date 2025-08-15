@@ -5,7 +5,8 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
     const tabs = [
         { id: 'nfts', label: 'Mis NFTs', icon: 'collection' },
         { id: 'historial', label: 'Historial', icon: 'clock' },
-        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' }
+        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' },
+        { id: 'progreso', label: 'Mi Progreso', icon: 'activity' }
     ];
 
     const getIcon = (iconName) => {
@@ -28,6 +29,13 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 );
+            case 'activity':
+                return (
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2 4 4 8-8 4 4 4-4" />
+                    </svg>
+                );
+
             default:
                 return null;
         }
@@ -39,11 +47,10 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                 <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${
-                        activeTab === tab.id 
-                            ? 'bg-emerald-600 text-white shadow-lg' 
+                    className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${activeTab === tab.id
+                            ? 'bg-emerald-600 text-white shadow-lg'
                             : 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700'
-                    }`}
+                        }`}
                 >
                     {getIcon(tab.icon)}
                     {tab.label}
