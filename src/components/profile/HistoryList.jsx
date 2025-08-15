@@ -32,32 +32,6 @@ export default function HistoryList({ history }) {
         }
     };
 
-    const getActivityColor = (type) => {
-        switch (type) {
-            case 'visita':
-                return 'bg-blue-100 text-blue-600 border-blue-200';
-            case 'compra':
-                return 'bg-purple-100 text-purple-600 border-purple-200';
-            case 'tour':
-                return 'bg-green-100 text-green-600 border-green-200';
-            default:
-                return 'bg-gray-100 text-gray-600 border-gray-200';
-        }
-    };
-
-    const getActivityLabel = (type) => {
-        switch (type) {
-            case 'visita':
-                return 'Visita';
-            case 'compra':
-                return 'Compra NFT';
-            case 'tour':
-                return 'Tour Completado';
-            default:
-                return 'Actividad';
-        }
-    };
-
     if (!history || history.length === 0) {
         return (
             <div className="text-center py-8">
@@ -75,61 +49,58 @@ export default function HistoryList({ history }) {
     }
 
     return (
-        <div className="flow-root">
-  <ul className="-mb-8">
-    {history.map((activity, activityIdx) => (
-      <li key={activity.id}>
-        <div className="relative pb-8">
-          {activityIdx !== history.length - 1 ? (
-            <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-100" aria-hidden="true" />
-          ) : null}
-          
-          <div className="relative flex space-x-4">
-            <div className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${getActivityColor(activity.type)} ring-2 ring-white`}>
-              {getActivityIcon(activity.type)}
-            </div>
-            
-            <div className="flex min-w-0 flex-1 flex-col space-y-1">
-              <div className="flex items-center space-x-2">
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getActivityColor(activity.type)}`}>
-                  {getActivityLabel(activity.type)}
-                </span>
-                <span className="text-xs text-gray-500">
-                  {new Date(activity.date).toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </span>
-              </div>
-              
-              <h3 className="text-sm font-medium text-gray-900">
-                {activity.title}
-              </h3>
-              
-              {activity.description && (
-                <p className="text-sm text-gray-600">
-                  {activity.description}
-                </p>
-              )}
-              
-              {activity.location && (
-                <div className="mt-1 flex items-start text-sm text-gray-500">
-                  <svg className="mr-1.5 h-4 w-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                  <span>{activity.location}</span>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <ul className="divide-y divide-gray-100">
+                {history.map((item) => (
+                    <li
+                        key={item.id}
+                        className="p-4 hover:bg-gray-50 transition-colors duration-150"
+                    >
+                        <div className="flex items-start space-x-3">
+                            {/* Icono circular */}
+                            <div className={`flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center ${
+                                item.type === 'visita' ? 'bg-blue-50 text-blue-500' :
+                                item.type === 'compra' ? 'bg-purple-50 text-purple-500' :
+                                'bg-emerald-50 text-emerald-500'
+                            }`}>
+                                {getActivityIcon(item.type)}
+                            </div>
+
+                            {/* Contenido */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-baseline justify-between">
+                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                        {item.title || item.action}
+                                    </p>
+                                    <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">
+                                        {new Date(item.date).toLocaleDateString('es-ES', {
+                                            day: 'numeric',
+                                            month: 'short'
+                                        })}
+                                    </span>
+                                </div>
+
+                                {/* Descripción si existe */}
+                                {item.description && (
+                                    <p className="mt-1 text-sm text-gray-600">
+                                        {item.description}
+                                    </p>
+                                )}
+
+                                {/* Ubicación */}
+                                {item.location && (
+                                    <div className="mt-1 flex items-center text-sm text-gray-500">
+                                        <svg className="flex-shrink-0 mr-1.5 h-3.5 w-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="truncate">{item.location}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </div>
-      </li>
-    ))}
-  </ul>
-</div>
     );
 }
