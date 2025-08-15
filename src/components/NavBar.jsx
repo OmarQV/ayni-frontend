@@ -119,14 +119,14 @@ const NavBar = () => {
 
                             <li>
                                 <Link
-                                    to="/register"
+                                    to="/tours"
                                     className={`font-medium px-4 py-2 rounded-lg transition-colors ${
                                         isActive("/register")
                                             ? 'text-white bg-secondary'
                                             : 'text-gray-300 hover:text-white hover:bg-gray-800'
                                     }`}
                                 >
-                                    Register
+                                    Tours
                                 </Link>
                             </li>
 
