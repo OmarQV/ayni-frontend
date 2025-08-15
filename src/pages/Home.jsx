@@ -3,29 +3,29 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
     const stats = [
-        { label: "Países", value: "8+", icon: "🌎" },
-        { label: "Rutas activas", value: "47", icon: "📍" },
-        { label: "Viajeros", value: "3.2K", icon: "✈️" },
-        { label: "MNT distribuidos", value: "890K", icon: "💰" }
+        { label: "Countries", value: "8+", icon: "🌎" },
+        { label: "Active routes", value: "47", icon: "📍" },
+        { label: "Travelers", value: "3.2K", icon: "✈️" },
+        { label: "MNT distributed", value: "890K", icon: "💰" }
     ];
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-white">
-            {/* Banner y Presentación del Proyecto */}
+            {/* Banner and Project Presentation */}
             <section className="min-h-screen w-full flex items-center justify-center px-4 py-20 bg-cover bg-center text-gray-800" style={{ backgroundImage: "url('http://googleusercontent.com/image_collection/image_retrieval/1251805359505376060_0')" }}>
                 <div className="absolute inset-0 bg-white opacity-40"></div>
                 <div className="relative max-w-6xl mx-auto text-center">
                     <h1 className="text-5xl md:text-7xl font-bold mb-4">
-                        <span className="text-secondary">AYNI</span> - Reciprocidad Sostenible
+                        <span className="text-secondary">AYNI</span> - Sustainable Reciprocity
                     </h1>
                     
                     <p className="text-xl md:text-2xl text-gray-800/90 mb-8 max-w-4xl mx-auto">
-                        Un ecosistema Web3 que transforma el turismo en América Latina mediante blockchain, NFTs y gamificación, creando un círculo virtuoso de desarrollo sostenible.
+                        A Web3 ecosystem that transforms tourism in Latin America through blockchain, NFTs, and gamification, creating a virtuous cycle of sustainable development.
                     </p>
 
                     <div className="flex flex-wrap justify-center gap-4 mb-12">
                         <Link to="/destinations" className="px-6 py-3 border-2 border-secondary text-secondary font-bold rounded-lg hover:bg-secondary/10 transition shadow-lg">
-                            🚀 Explora Rutas NFT
+                            🚀 Explore NFT Routes
                         </Link>
                     </div>
 
