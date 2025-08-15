@@ -5,7 +5,8 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
     const tabs = [
         { id: 'nfts', label: 'Mis NFTs', icon: 'collection' },
         { id: 'historial', label: 'Historial', icon: 'clock' },
-        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' }
+        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' },
+        { id: 'certificados', label: 'Mis Certificados', icon: 'certificate' } 
     ];
 
     const getIcon = (iconName) => {
@@ -25,7 +26,13 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
             case 'calendar':
                 return (
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z" />
+                    </svg>
+                );
+            case 'certificate': 
+                return (
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                 );
             default:
@@ -40,8 +47,8 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${
-                        activeTab === tab.id 
-                            ? 'bg-emerald-600 text-white shadow-lg' 
+                        activeTab === tab.id
+                            ? 'bg-emerald-600 text-white shadow-lg'
                             : 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700'
                     }`}
                 >
