@@ -1,18 +1,36 @@
 // src/components/profile/EditProfileModal.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function EditProfileModal({ user, walletAddress, isWalletConnected, onClose, onUpdate }) {
     const [formData, setFormData] = useState({
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-        role: user.role,
-        bio: user.bio,
-        twitter: user.social.twitter,
-        instagram: user.social.instagram,
+        name: '',
+        email: '',
+        avatar: '',
+        role: '',
+        bio: '',
+        twitter: '',
+        instagram: '',
     });
 
+    const [avatarPreview, setAvatarPreview] = useState('');
     const [errors, setErrors] = useState({});
+    const fileInputRef = useRef(null);
+
+    // Inicializar el formulario con los datos del usuario
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                email: user.email || '',
+                avatar: user.avatar || '',
+                role: user.role || '',
+                bio: user.bio || '',
+                twitter: user.social?.twitter || '',
+                instagram: user.social?.instagram || '',
+            });
+            setAvatarPreview(user.avatar || '');
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,13 +39,58 @@ export default function EditProfileModal({ user, walletAddress, isWalletConnecte
             [name]: value
         }));
         
-        // Limpiar errores cuando el usuario empiece a escribir
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
                 [name]: ''
             }));
         }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validar tipo de archivo
+            if (!file.type.match('image.*')) {
+                setErrors(prev => ({
+                    ...prev,
+                    avatar: 'Por favor, selecciona un archivo de imagen válido'
+                }));
+                return;
+            }
+
+            // Validar tamaño del archivo (ej. máximo 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                setErrors(prev => ({
+                    ...prev,
+                    avatar: 'La imagen es demasiado grande (máximo 2MB)'
+                }));
+                return;
+            }
+
+            // Crear URL de vista previa
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result);
+                setFormData(prev => ({
+                    ...prev,
+                    avatar: reader.result // Guardamos la imagen como base64
+                }));
+            };
+            reader.readAsDataURL(file);
+
+            // Limpiar errores
+            if (errors.avatar) {
+                setErrors(prev => ({
+                    ...prev,
+                    avatar: ''
+                }));
+            }
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current.click();
     };
 
     const validateForm = () => {
@@ -43,10 +106,8 @@ export default function EditProfileModal({ user, walletAddress, isWalletConnecte
             newErrors.email = 'El email no es válido';
         }
         
-        if (!formData.avatar.trim()) {
-            newErrors.avatar = 'La URL del avatar es requerida';
-        } else if (!/^https?:\/\/.+\..+/.test(formData.avatar)) {
-            newErrors.avatar = 'La URL del avatar no es válida';
+        if (!formData.avatar) {
+            newErrors.avatar = 'La imagen de perfil es requerida';
         }
         
         if (!formData.role.trim()) {
@@ -57,7 +118,6 @@ export default function EditProfileModal({ user, walletAddress, isWalletConnecte
             newErrors.bio = 'La biografía es requerida';
         }
 
-        // Validar URLs de redes sociales si están presentes
         if (formData.twitter && !/^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+/.test(formData.twitter)) {
             newErrors.twitter = 'URL de Twitter no válida';
         }
@@ -78,21 +138,25 @@ export default function EditProfileModal({ user, walletAddress, isWalletConnecte
         }
 
         const updatedData = {
+            ...user,
             name: formData.name,
             email: formData.email,
-            avatar: formData.avatar,
+            avatar: formData.avatar, // Aquí va la imagen en base64
             role: formData.role,
             bio: formData.bio,
             social: {
+                ...user.social,
                 twitter: formData.twitter,
                 instagram: formData.instagram,
             }
         };
 
         onUpdate(updatedData);
+        onClose();
     };
 
     const shortenAddress = (address) => {
+        if (!address) return '';
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     };
 
@@ -161,32 +225,44 @@ export default function EditProfileModal({ user, walletAddress, isWalletConnecte
                         {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                     </div>
 
-                    {/* Avatar URL */}
+                    {/* Avatar */}
                     <div>
-                        <label htmlFor="avatar" className="block text-sm font-medium text-gray-700 mb-2">
-                            URL del Avatar *
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Imagen de Perfil *
                         </label>
                         <input
-                            type="url"
-                            id="avatar"
-                            name="avatar"
-                            value={formData.avatar}
-                            onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                                errors.avatar ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                            placeholder="https://ejemplo.com/mi-avatar.jpg"
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            className="hidden"
                         />
-                        {errors.avatar && <p className="mt-1 text-sm text-red-600">{errors.avatar}</p>}
-                        <div className="mt-2 flex justify-center">
-                            <img
-                                src={formData.avatar}
-                                alt="Vista previa"
-                                className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/64x64?text=Avatar';
-                                }}
-                            />
+                        <div className="flex flex-col items-center">
+                            <div className="relative mb-2">
+                                <img
+                                    src={avatarPreview || 'https://via.placeholder.com/150?text=Avatar'}
+                                    alt="Vista previa"
+                                    className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={triggerFileInput}
+                                    className="absolute bottom-0 right-0 bg-emerald-500 text-white rounded-full p-2 hover:bg-emerald-600 transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={triggerFileInput}
+                                className="text-sm text-emerald-600 hover:text-emerald-800"
+                            >
+                                Seleccionar imagen
+                            </button>
+                            {errors.avatar && <p className="mt-1 text-sm text-red-600">{errors.avatar}</p>}
                         </div>
                     </div>
 

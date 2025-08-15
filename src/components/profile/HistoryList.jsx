@@ -76,55 +76,60 @@ export default function HistoryList({ history }) {
 
     return (
         <div className="flow-root">
-            <ul className="-mb-8">
-                {history.map((activity, index) => (
-                    <li key={activity.id}>
-                        <div className="relative pb-8">
-                            {index !== history.length - 1 && (
-                                <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
-                            )}
-                            <div className="relative flex space-x-3">
-                                <div className={`relative h-8 w-8 flex items-center justify-center rounded-full ${getActivityColor(activity.type)} border`}>
-                                    {getActivityIcon(activity.type)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="text-sm text-gray-500">
-                                        <div className="font-medium text-gray-900">
-                                            {activity.title}
-                                        </div>
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1 mb-1 mr-2 ${getActivityColor(activity.type)}">
-                                            {getActivityLabel(activity.type)}
-                                        </span>
-                                        <span className="text-xs">
-                                            {new Date(activity.date).toLocaleDateString('es-ES', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
-                                        </span>
-                                    </div>
-                                    {activity.description && (
-                                        <p className="text-sm text-gray-600 mt-1">
-                                            {activity.description}
-                                        </p>
-                                    )}
-                                    {activity.location && (
-                                        <div className="mt-1 flex items-center text-sm text-gray-500">
-                                            <svg className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            {activity.location}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+  <ul className="-mb-8">
+    {history.map((activity, activityIdx) => (
+      <li key={activity.id}>
+        <div className="relative pb-8">
+          {activityIdx !== history.length - 1 ? (
+            <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-100" aria-hidden="true" />
+          ) : null}
+          
+          <div className="relative flex space-x-4">
+            <div className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${getActivityColor(activity.type)} ring-2 ring-white`}>
+              {getActivityIcon(activity.type)}
+            </div>
+            
+            <div className="flex min-w-0 flex-1 flex-col space-y-1">
+              <div className="flex items-center space-x-2">
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getActivityColor(activity.type)}`}>
+                  {getActivityLabel(activity.type)}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {new Date(activity.date).toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+              
+              <h3 className="text-sm font-medium text-gray-900">
+                {activity.title}
+              </h3>
+              
+              {activity.description && (
+                <p className="text-sm text-gray-600">
+                  {activity.description}
+                </p>
+              )}
+              
+              {activity.location && (
+                <div className="mt-1 flex items-start text-sm text-gray-500">
+                  <svg className="mr-1.5 h-4 w-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                  <span>{activity.location}</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+      </li>
+    ))}
+  </ul>
+</div>
     );
 }

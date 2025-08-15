@@ -12,8 +12,8 @@ import ReservationsList from '../components/profile/ReservationsList';
 import NFTModal from '../components/profile/NFTModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
 
-// --- Datos de prueba para ambos perfiles ---
-const fakeTuristaData = {
+// --- Datos iniciales para ambos perfiles ---
+const initialTuristaData = {
     name: 'Jhamil Calixto',
     email: 'jhamil@example.com',
     avatar: 'https://i.pravatar.cc/150?u=jhamil',
@@ -37,7 +37,7 @@ const fakeTuristaData = {
     ]
 };
 
-const fakeOperadorData = {
+const initialOperadorData = {
     name: 'Operadora "Ayni Tours"',
     email: 'aynitours@example.com',
     avatar: 'https://i.pravatar.cc/150?u=aynitours',
@@ -67,15 +67,22 @@ export default function UserProfile() {
     const [activeTab, setActiveTab] = useState('nfts');
     const [selectedNFT, setSelectedNFT] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [userData, setUserData] = useState(null);
 
-    const user = userType === 'turista' ? fakeTuristaData : fakeOperadorData;
-
+    // Inicializar datos del usuario basado en el tipo
     useEffect(() => {
-        // Simulación de carga de datos
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-        return () => clearTimeout(timer);
+        if (userType) {
+            setUserData(userType === 'turista' 
+                ? {...initialTuristaData} 
+                : {...initialOperadorData});
+            
+            // Simulación de carga de datos
+            const timer = setTimeout(() => {
+                setIsLoading(false);
+            }, 1000);
+            
+            return () => clearTimeout(timer);
+        }
     }, [userType]);
 
     const handleConnectWallet = async () => {
@@ -84,6 +91,14 @@ export default function UserProfile() {
         } catch (err) {
             console.error("Error al conectar la wallet:", err);
         }
+    };
+
+    const handleUpdateProfile = (updatedData) => {
+        setUserData(prev => ({
+            ...prev,
+            ...updatedData
+        }));
+        setShowEditModal(false);
     };
 
     // --- Lógica de renderizado condicional ---
@@ -135,14 +150,7 @@ export default function UserProfile() {
         );
     }
 
-    const handleUpdateProfile = (updatedData) => {
-        // Esta función se mantiene igual ya que trabaja con los datos de prueba
-        // En una implementación real, aquí harías una llamada a tu backend
-        console.log("Perfil actualizado:", updatedData);
-        setShowEditModal(false);
-    };
-
-    if (isLoading) {
+    if (isLoading || !userData) {
         return <LoadingSpinner />;
     }
 
@@ -160,7 +168,7 @@ export default function UserProfile() {
             
             {showEditModal && (
                 <EditProfileModal
-                    user={user}
+                    user={userData}
                     walletAddress={walletAddress}
                     isWalletConnected={isConnected}
                     onClose={() => setShowEditModal(false)}
@@ -172,7 +180,7 @@ export default function UserProfile() {
                 <ProfileHeader />
                 
                 <ProfileCard 
-                    user={user}
+                    user={userData}
                     walletAddress={walletAddress}
                     isWalletConnected={isConnected}
                     onEditClick={() => setShowEditModal(true)}
@@ -186,17 +194,17 @@ export default function UserProfile() {
                 <div className="mb-12">
                     {activeTab === 'nfts' && (
                         <NFTGrid 
-                            nfts={user.nfts}
+                            nfts={userData.nfts}
                             onNFTClick={setSelectedNFT}
                         />
                     )}
 
                     {activeTab === 'historial' && (
-                        <HistoryList history={user.historial} />
+                        <HistoryList history={userData.historial} />
                     )}
 
                     {activeTab === 'reservas' && (
-                        <ReservationsList reservations={user.reservas} />
+                        <ReservationsList reservations={userData.reservas} />
                     )}
                 </div>
             </div>
@@ -219,11 +227,11 @@ export default function UserProfile() {
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-12 transition-all duration-300 hover:shadow-2xl p-8">
                         <div className="flex flex-col md:flex-row items-center justify-between">
                             <div className="flex items-center">
-                                <img src={user.avatar} alt="Avatar Operador" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+                                <img src={userData.avatar} alt="Avatar Operador" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
                                 <div className="ml-6">
-                                    <h2 className="text-3xl font-bold text-gray-800">{user.name}</h2>
-                                    <p className="text-gray-600">{user.email}</p>
-                                    <p className="text-emerald-600 mt-1">{user.role}</p>
+                                    <h2 className="text-3xl font-bold text-gray-800">{userData.name}</h2>
+                                    <p className="text-gray-600">{userData.email}</p>
+                                    <p className="text-emerald-600 mt-1">{userData.role}</p>
                                 </div>
                             </div>
                             <div className="mt-6 md:mt-0">
@@ -239,15 +247,15 @@ export default function UserProfile() {
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                             <div className="bg-blue-50 p-6 rounded-xl">
                                 <p className="text-sm text-blue-600">Ventas totales</p>
-                                <p className="text-4xl font-bold text-blue-800 mt-2">{user.ventas}</p>
+                                <p className="text-4xl font-bold text-blue-800 mt-2">{userData.ventas}</p>
                             </div>
                             <div className="bg-green-50 p-6 rounded-xl">
                                 <p className="text-sm text-green-600">Rutas publicadas</p>
-                                <p className="text-4xl font-bold text-green-800 mt-2">{user.rutasPublicadas}</p>
+                                <p className="text-4xl font-bold text-green-800 mt-2">{userData.rutasPublicadas}</p>
                             </div>
                             <div className="bg-purple-50 p-6 rounded-xl">
                                 <p className="text-sm text-purple-600">Ingresos (estimado)</p>
-                                <p className="text-2xl font-bold text-purple-800 mt-2">{user.ingresos}</p>
+                                <p className="text-2xl font-bold text-purple-800 mt-2">{userData.ingresos}</p>
                             </div>
                         </div>
                     </div>
