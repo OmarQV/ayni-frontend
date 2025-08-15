@@ -5,7 +5,8 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
     const tabs = [
         { id: 'nfts', label: 'Mis NFTs', icon: 'collection' },
         { id: 'historial', label: 'Historial', icon: 'clock' },
-        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' }
+        { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' },
+        { id: 'progreso', label: 'Mis Progresp', icon: 'calendar' }
     ];
 
     const getIcon = (iconName) => {
