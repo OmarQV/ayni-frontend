@@ -15,14 +15,14 @@ import ProgressList from '../components/profile/ProgressList';
 
 // --- Datos iniciales para ambos perfiles ---
 const initialTuristaData = {
-    name: 'Jhamil Calixto',
-    email: 'jhamil@example.com',
+    name: 'Jose Fernandez',
+    email: 'jose@gmail.com',
     avatar: 'https://i.pravatar.cc/150?u=jhamil',
     role: 'Turista responsable',
     bio: 'Apasionado por el turismo sostenible y la preservación cultural',
     social: {
-        twitter: 'https://twitter.com/jhamil',
-        instagram: 'https://instagram.com/jhamil',
+        twitter: 'https://twitter.com/jose',
+        instagram: 'https://instagram.com/jose',
     },
     historial: [
         { id: 1, date: '2025-01-10', action: 'Visitó la Isla del Sol', location: 'Lago Titicaca', type: 'visita' },
