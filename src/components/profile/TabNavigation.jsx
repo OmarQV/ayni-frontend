@@ -6,11 +6,7 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
         { id: 'nfts', label: 'Mis NFTs', icon: 'collection' },
         { id: 'historial', label: 'Historial', icon: 'clock' },
         { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' },
-<<<<<<< HEAD
-        { id: 'certificados', label: 'Mis Certificados', icon: 'certificate' } 
-=======
         { id: 'progreso', label: 'Mi Progreso', icon: 'activity' }
->>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
     ];
 
     const getIcon = (iconName) => {
@@ -57,12 +53,7 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                 <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-<<<<<<< HEAD
-                    className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${
-                        activeTab === tab.id
-=======
                     className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${activeTab === tab.id
->>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
                             ? 'bg-emerald-600 text-white shadow-lg'
                             : 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700'
                         }`}
