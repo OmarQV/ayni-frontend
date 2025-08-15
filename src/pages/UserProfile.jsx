@@ -9,17 +9,23 @@ import TabNavigation from '../components/profile/TabNavigation';
 import NFTGrid from '../components/profile/NFTGrid';
 import HistoryList from '../components/profile/HistoryList';
 import ReservationsList from '../components/profile/ReservationsList';
+<<<<<<< HEAD
+=======
+import NFTModal from '../components/profile/NFTModal';
+import EditProfileModal from '../components/profile/EditProfileModal';
+import ProgressList from '../components/profile/ProgressList';
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
 
 
 const initialTuristaData = {
-    name: 'Jhamil Calixto',
-    email: 'jhamil@example.com',
+    name: 'Jose Fernandez',
+    email: 'jose@gmail.com',
     avatar: 'https://i.pravatar.cc/150?u=jhamil',
     role: 'Turista responsable',
     bio: 'Apasionado por el turismo sostenible y la preservación cultural',
     social: {
-        twitter: 'https://twitter.com/jhamil',
-        instagram: 'https://instagram.com/jhamil',
+        twitter: 'https://twitter.com/jose',
+        instagram: 'https://instagram.com/jose',
     },
     historial: [
         { id: 1, date: '2025-01-10', action: 'Visitó la Isla del Sol', location: 'Lago Titicaca', type: 'visita' },
@@ -51,6 +57,7 @@ const initialOperadorData = {
 };
 
 
+<<<<<<< HEAD
 const CertificationSection = ({ userAddress, userData }) => {
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-6">
@@ -266,6 +273,8 @@ const EditProfileModal = ({ user, walletAddress, isWalletConnected, onClose, onU
     );
 };
 
+=======
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
 export default function UserProfile() {
     const {
         isConnected,
@@ -282,6 +291,25 @@ export default function UserProfile() {
     const [selectedNFT, setSelectedNFT] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [userData, setUserData] = useState(null);
+
+
+    const progressData = [
+        {
+            id: 1,
+            etapa: "Lanzamiento MVP",
+            descripcion: "Publicación de la primera versión en Mantle L2",
+            fecha: "2025-08-10",
+            estado: "completado",
+            evidenciaHash: "ipfs://Qm123abc456def"
+        },
+        {
+            id: 2,
+            etapa: "Integración con comunidades",
+            descripcion: "Registro de las primeras 5 rutas turísticas",
+            fecha: "2025-08-20",
+            estado: "en_progreso"
+        }
+    ];
 
     // Inicializar datos del usuario basado en el tipo
     useEffect(() => {
@@ -467,6 +495,7 @@ export default function UserProfile() {
                             <ReservationsList reservations={userData.reservas} />
                         )}
 
+<<<<<<< HEAD
                         {activeTab === 'certificados' && (
                             <CertificationSection
                                 userAddress={walletAddress}
@@ -477,6 +506,17 @@ export default function UserProfile() {
                                     description: userData.bio
                                 }}
                             />
+=======
+                        {activeTab === 'progreso' && (
+                            <div>
+                                {/* <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+
+                                {activeTab === 'nfts' && <NFTGrid nfts={[]} />}
+                                {activeTab === 'historial' && <div>Contenido historial</div>}
+                                {activeTab === 'reservas' && <ReservationsList reservations={[]} />}
+                                {activeTab === 'progreso' && <ProgressList progress={progressData} />}
+                            </div>
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
                         )}
                     </div>
                 </div>
@@ -484,6 +524,10 @@ export default function UserProfile() {
         );
     }
 
+<<<<<<< HEAD
+=======
+    // --- Renderizado del perfil de Operador ---
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
     if (userType === 'operador') {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4 sm:px-6 lg:px-8">

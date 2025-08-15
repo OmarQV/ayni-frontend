@@ -6,7 +6,11 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
         { id: 'nfts', label: 'Mis NFTs', icon: 'collection' },
         { id: 'historial', label: 'Historial', icon: 'clock' },
         { id: 'reservas', label: 'Mis Reservas', icon: 'calendar' },
+<<<<<<< HEAD
         { id: 'certificados', label: 'Mis Certificados', icon: 'certificate' } 
+=======
+        { id: 'progreso', label: 'Mi Progreso', icon: 'activity' }
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
     ];
 
     const getIcon = (iconName) => {
@@ -35,6 +39,13 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                 );
+            case 'activity':
+                return (
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2 4 4 8-8 4 4 4-4" />
+                    </svg>
+                );
+
             default:
                 return null;
         }
@@ -46,11 +57,15 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                 <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
+<<<<<<< HEAD
                     className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${
                         activeTab === tab.id
+=======
+                    className={`px-6 py-3 font-medium text-sm rounded-t-lg mr-2 transition-all flex items-center whitespace-nowrap ${activeTab === tab.id
+>>>>>>> b1bbee951a04ab9dea992b2abd7ce1757643510a
                             ? 'bg-emerald-600 text-white shadow-lg'
                             : 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700'
-                    }`}
+                        }`}
                 >
                     {getIcon(tab.icon)}
                     {tab.label}
