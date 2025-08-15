@@ -1,3 +1,5 @@
+// src/hooks/useWallet.js
+
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
@@ -29,6 +31,9 @@ export const useWallet = () => {
     const [chainId, setChainId] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    
+    // --- NUEVO ESTADO PARA EL ROL DEL USUARIO ---
+    const [userType, setUserType] = useState(null);
 
     const isWalletInstalled = () => {
         return typeof window !== 'undefined' && window.ethereum;
@@ -141,6 +146,16 @@ export const useWallet = () => {
         setAccount('');
         setBalance('');
         setChainId(null);
+        setUserType(null); // --- NUEVA LÍNEA ---
+    };
+
+    // --- NUEVA FUNCIÓN PARA REGISTRAR EL ROL DEL USUARIO ---
+    const registerUser = (role) => {
+        if (isConnected) {
+            setUserType(role);
+            // En una implementación real, aquí se llamaría a una API o contrato para registrar el rol.
+            console.log(`Rol registrado: ${role}`);
+        }
     };
 
     useEffect(() => {
@@ -172,8 +187,10 @@ export const useWallet = () => {
         chainId,
         error,
         loading,
+        userType, // --- NUEVO VALOR RETORNADO ---
         connectWallet,
         disconnectWallet,
-        isWalletInstalled
+        isWalletInstalled,
+        registerUser, // --- NUEVA FUNCIÓN RETORNADA ---
     };
 };
