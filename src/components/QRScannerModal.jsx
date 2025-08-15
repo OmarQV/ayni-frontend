@@ -1,18 +1,18 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, QrCode, Gift, MapPin, Star, X, CheckCircle, Loader } from 'lucide-react';
+import NFTModal from './profile/NFTModal'; // Asegúrate de que la ruta sea correcta
 
-const QRScannerModal = ({ isOpen, onClose }) => {
-  const [scanningMode, setScanningMode] = useState('camera'); // 'camera' or 'manual'
+const QRScannerModal = ({ isOpen, onClose, onNFTMinted }) => {
+  const [scanningMode, setScanningMode] = useState('camera');
   const [scannedData, setScannedData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [mintingStatus, setMintingStatus] = useState(null); // 'success', 'error', null
+  const [mintingStatus, setMintingStatus] = useState(null);
   const [nftMinted, setNftMinted] = useState(null);
   const [manualCode, setManualCode] = useState('');
-  // const videoRef = useRef(null);
-  // const canvasRef = useRef(null);
   const [scanning, setScanning] = useState(false);
+  const [showNFTModal, setShowNFTModal] = useState(false);
 
-  // Simulación de datos QR para diferentes destinos de América Latina
+  // Datos QR fijos - todo en memoria temporal
   const mockQRData = {
     'AYNI-COL-001': {
       location: 'Hacienda Cafetera El Paraíso',
@@ -20,9 +20,14 @@ const QRScannerModal = ({ isOpen, onClose }) => {
       route: 'Ruta del Café en Colombia',
       coordinates: '4.5981, -75.2958',
       nft: {
-        name: 'Café Colombiano NFT',
+        id: 301,
+        title: 'Café Colombiano NFT',
+        issuedDate: new Date().toISOString().split('T')[0],
+        imageUrl: 'https://img.freepik.com/foto-gratis/delicioso-cafe-organico-naturaleza-muerta_23-2151762341.jpg?semt=ais_hybrid&w=740&q=80',
+        valor: '0.05 ETH',
+        beneficioComunidad: '30%',
+        metadata: { fotos: 3, audios: 1, qrVerified: true },
         description: 'Has visitado una auténtica hacienda cafetera en el corazón de Colombia',
-        image: 'https://img.freepik.com/foto-gratis/delicioso-cafe-organico-naturaleza-muerta_23-2151762341.jpg?semt=ais_hybrid&w=740&q=80',
         rarity: 'Común',
         points: 50
       }
@@ -33,9 +38,14 @@ const QRScannerModal = ({ isOpen, onClose }) => {
       route: 'Camino Inca Ancestral',
       coordinates: '-13.1631, -72.5450',
       nft: {
-        name: 'Ciudadela Inca NFT',
+        id: 302,
+        title: 'Ciudadela Inca NFT',
+        issuedDate: new Date().toISOString().split('T')[0],
+        imageUrl: 'https://content-viajes.nationalgeographic.com.es/medio/2018/03/01/machu-picchu_5ff969ae_1280x720.jpg',
+        valor: '0.08 ETH',
+        beneficioComunidad: '40%',
+        metadata: { fotos: 5, audios: 2, qrVerified: true },
         description: 'Has explorado la majestuosa ciudadela de Machu Picchu',
-        image: 'https://content-viajes.nationalgeographic.com.es/medio/2018/03/01/machu-picchu_5ff969ae_1280x720.jpg',
         rarity: 'Épico',
         points: 150
       }
@@ -46,9 +56,14 @@ const QRScannerModal = ({ isOpen, onClose }) => {
       route: 'Altiplano Boliviano',
       coordinates: '-20.1338, -67.4891',
       nft: {
-        name: 'Espejo del Cielo NFT',
+        id: 303,
+        title: 'Espejo del Cielo NFT',
+        issuedDate: new Date().toISOString().split('T')[0],
+        imageUrl: 'https://uploads.exoticca.com/global/destination/poi/salar-uyuni.png',
+        valor: '0.10 ETH',
+        beneficioComunidad: '50%',
+        metadata: { fotos: 4, audios: 1, qrVerified: true },
         description: 'Has caminado sobre el espejo más grande del mundo',
-        image: 'https://uploads.exoticca.com/global/destination/poi/salar-uyuni.png',
         rarity: 'Legendario',
         points: 200
       }
@@ -59,16 +74,20 @@ const QRScannerModal = ({ isOpen, onClose }) => {
       route: 'Tradiciones Andinas',
       coordinates: '0.2343, -78.2628',
       nft: {
-        name: 'Textil Ancestral NFT',
+        id: 304,
+        title: 'Textil Ancestral NFT',
+        issuedDate: new Date().toISOString().split('T')[0],
+        imageUrl: 'https://pieraceresa.cl/cdn/shop/articles/textil-unsplash.jpg?v=1659477454&width=1100',
+        valor: '0.06 ETH',
+        beneficioComunidad: '35%',
+        metadata: { fotos: 3, audios: 1, qrVerified: true },
         description: 'Has descubierto las tradiciones textiles de los pueblos andinos',
-        image: 'https://pieraceresa.cl/cdn/shop/articles/textil-unsplash.jpg?v=1659477454&width=1100',
         rarity: 'Raro',
         points: 75
       }
     }
   };
 
-  // Simulación de cámara
   useEffect(() => {
     if (isOpen && scanningMode === 'camera') {
       startCamera();
@@ -81,10 +100,8 @@ const QRScannerModal = ({ isOpen, onClose }) => {
 
   const startCamera = async () => {
     try {
-      // Simulación de acceso a cámara (en un entorno real usarías getUserMedia)
       setScanning(true);
-      
-      // Simulación de escaneo automático después de 3 segundos
+      // Simula el escaneo automático después de 3 segundos
       setTimeout(() => {
         const randomCodes = Object.keys(mockQRData);
         const randomCode = randomCodes[Math.floor(Math.random() * randomCodes.length)];
@@ -106,14 +123,11 @@ const QRScannerModal = ({ isOpen, onClose }) => {
 
   const processQRCode = async (qrCode) => {
     setIsProcessing(true);
-    
-    // Simular delay de procesamiento
+    // Simula procesamiento
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     if (mockQRData[qrCode]) {
       setScannedData(mockQRData[qrCode]);
-      
-      // Simular minteo de NFT
       setTimeout(() => {
         mintNFT(mockQRData[qrCode]);
       }, 2000);
@@ -125,21 +139,30 @@ const QRScannerModal = ({ isOpen, onClose }) => {
 
   const mintNFT = async (locationData) => {
     try {
-      // Simulación de minteo en Mantle L2
+      // Simula el proceso de minteo
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const mintedNFT = {
-        tokenId: Math.floor(Math.random() * 10000),
-        transactionHash: `0x${Math.random().toString(16).substring(2, 66)}`,
-        gasUsed: '0.00012 MNT', // Costos bajos en Mantle
-        blockNumber: Math.floor(Math.random() * 1000000),
-        ...locationData.nft
+        ...locationData.nft,
+        location: `${locationData.location}, ${locationData.country}`,
+        coordinates: locationData.coordinates,
+        tokenId: locationData.nft.id,
+        gasUsed: '0.00012 MNT',
+        blockNumber: 1500000 + locationData.nft.id,
+        metadata: locationData.nft.metadata,
+        mintedAt: new Date().toISOString() // Timestamp del minteo
       };
       
       setNftMinted(mintedNFT);
       setMintingStatus('success');
       setIsProcessing(false);
-    } catch {
+      
+      // Envía el NFT minteado al componente padre (NFTGrid)
+      if (onNFTMinted) {
+        onNFTMinted(mintedNFT);
+      }
+    } catch (error) {
+      console.error('Error minting NFT:', error);
       setMintingStatus('error');
       setIsProcessing(false);
     }
@@ -157,6 +180,16 @@ const QRScannerModal = ({ isOpen, onClose }) => {
     setMintingStatus(null);
     setManualCode('');
     setIsProcessing(false);
+    setScanning(false);
+  };
+
+  const handleClose = () => {
+    resetScanner();
+    onClose();
+  };
+
+  const handleViewDetails = () => {
+    setShowNFTModal(true);
   };
 
   if (!isOpen) return null;
@@ -176,7 +209,7 @@ const QRScannerModal = ({ isOpen, onClose }) => {
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
           >
             <X className="w-4 h-4 text-gray-600" />
@@ -269,17 +302,17 @@ const QRScannerModal = ({ isOpen, onClose }) => {
                       value={manualCode}
                       onChange={(e) => setManualCode(e.target.value)}
                       placeholder="Ej: AYNI-COL-001"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none"
                     />
                   </div>
                   
                   <div className="bg-blue-50 rounded-xl p-4 mb-4">
                     <h4 className="font-medium text-blue-900 mb-2">Códigos de Prueba:</h4>
                     <div className="text-sm text-blue-800 space-y-1">
-                      <p><code>AYNI-COL-001</code> - Hacienda Cafetera (Colombia)</p>
-                      <p><code>AYNI-PER-002</code> - Machu Picchu (Perú)</p>
-                      <p><code>AYNI-BOL-003</code> - Salar de Uyuni (Bolivia)</p>
-                      <p><code>AYNI-ECU-004</code> - Mercado Otavalo (Ecuador)</p>
+                      <p><code className="bg-white px-2 py-1 rounded">AYNI-COL-001</code> - Hacienda Cafetera (Colombia)</p>
+                      <p><code className="bg-white px-2 py-1 rounded">AYNI-PER-002</code> - Machu Picchu (Perú)</p>
+                      <p><code className="bg-white px-2 py-1 rounded">AYNI-BOL-003</code> - Salar de Uyuni (Bolivia)</p>
+                      <p><code className="bg-white px-2 py-1 rounded">AYNI-ECU-004</code> - Mercado Otavalo (Ecuador)</p>
                     </div>
                   </div>
                   
@@ -337,18 +370,18 @@ const QRScannerModal = ({ isOpen, onClose }) => {
               
               <div className="bg-gray-50 rounded-xl p-4 mb-4">
                 <img
-                  src={nftMinted.image}
-                  alt={nftMinted.name}
-                  className="w-32 h-32 mx-auto rounded-xl mb-4"
+                  src={nftMinted.imageUrl}
+                  alt={nftMinted.title}
+                  className="w-32 h-32 mx-auto rounded-xl mb-4 object-cover"
                 />
                 
-                <h4 className="font-bold text-gray-900 mb-1">{nftMinted.name}</h4>
+                <h4 className="font-bold text-gray-900 mb-1">{nftMinted.title}</h4>
                 <p className="text-sm text-gray-600 mb-3">{nftMinted.description}</p>
                 
                 <div className="flex items-center justify-center gap-4 text-sm">
                   <div className="flex items-center gap-1">
                     <MapPin className="w-4 h-4 text-gray-500" />
-                    <span>{scannedData.location}</span>
+                    <span className="text-xs">{nftMinted.location}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500" />
@@ -360,8 +393,9 @@ const QRScannerModal = ({ isOpen, onClose }) => {
               <div className="bg-green-50 rounded-xl p-4 mb-4">
                 <h5 className="font-medium text-green-900 mb-2">Detalles de la Transacción</h5>
                 <div className="text-sm text-green-800 space-y-1">
-                  <p><strong>Token ID:</strong> #{nftMinted.tokenId}</p>
-                  <p><strong>Gas usado:</strong> {nftMinted.gasUsed}</p>
+                  <p><strong>Token ID:</strong> #{nftMinted.id}</p>
+                  <p><strong>Valor:</strong> {nftMinted.valor}</p>
+                  <p><strong>Beneficio comunidad:</strong> {nftMinted.beneficioComunidad}</p>
                   <p><strong>Red:</strong> Mantle L2</p>
                   <p><strong>Puntos ganados:</strong> +{nftMinted.points}</p>
                 </div>
@@ -375,10 +409,10 @@ const QRScannerModal = ({ isOpen, onClose }) => {
                   Escanear Otro
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={handleViewDetails}
                   className="flex-1 bg-gradient-to-r from-orange-400 to-pink-500 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-shadow"
                 >
-                  Ver en Perfil
+                  Ver Detalles
                 </button>
               </div>
             </div>
@@ -428,6 +462,14 @@ const QRScannerModal = ({ isOpen, onClose }) => {
           </div>
         )}
       </div>
+
+      {/* NFT Modal */}
+      {showNFTModal && nftMinted && (
+        <NFTModal 
+          nft={nftMinted} 
+          onClose={() => setShowNFTModal(false)}
+        />
+      )}
     </div>
   );
 };
