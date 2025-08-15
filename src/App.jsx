@@ -5,6 +5,7 @@ import Navbar from './components/NavBar';
 import Home from './pages/Home';
 import UserProfile from './pages/UserProfile';
 import Destinations from './pages/Destinations';
+import Tours from './pages/Tours';
 import MapaInteractivoPage from './pages/MapaInteractivoPage'; // <-- Importa la página del mapa
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/mapa" element={<MapaInteractivoPage />} /> {/* Nueva ruta */}
+            <Route path="/tours" element={<Tours />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route
               path="*"
